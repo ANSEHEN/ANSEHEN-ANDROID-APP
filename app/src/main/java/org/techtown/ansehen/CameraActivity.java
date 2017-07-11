@@ -40,7 +40,7 @@ public class CameraActivity extends AppCompatActivity {
         setup();
     }
 
-    public void camButton(View v){
+    public void camButton(){
         Intent camintent = new Intent(CameraActivity.this, MainActivity.class);
         startActivity(camintent);
     }
@@ -94,32 +94,26 @@ public class CameraActivity extends AppCompatActivity {
             FaceDetector detector = new FaceDetector(bitmap.getWidth(), bitmap.getHeight(), faces.length);
             int numFace =detector.findFaces(bitmap, faces);
             Log.e(TAG,"number of face : "+numFace);
-            // if(numFace>0)
-                {
-                new Thread(new Runnable() {
+            if(numFace>0)
+            {
+                    new Thread(new Runnable() {
 
-                    public void run() {
+                        public void run() {
 
-                        runOnUiThread(new Runnable() {
+                            runOnUiThread(new Runnable() {
 
-                            public void run() {
-                                //messageText.setText("uploading started.....");
-                            }
-                        });
+                                public void run() {
+                                }
+                            });
+                            HttpClient httpClient = new HttpClient();
+                            httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
 
-
-                        HttpClient httpClient = new HttpClient();
-                        httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
-                        // uploadFile(uploadFilePath + "" + uploadFileName);
-                    }
-                }).start();
-
-
-
+                        }
+                    }).start();
+                    //camButton();
             }
-            //else
-            //  setup();
-
+            else
+              setup();
         }
 
         if(requestCode!=RESULT_OK)

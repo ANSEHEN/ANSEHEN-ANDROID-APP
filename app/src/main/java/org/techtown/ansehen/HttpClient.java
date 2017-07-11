@@ -51,10 +51,6 @@ public class HttpClient {
             buffer.append("userPw").append("=").append(pw).append("&");
             buffer.append("fileName").append("=").append(filename);
 
-
-            // write data
-            // DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-            // serverResponseCode = conn.getResponseCode();
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
             PrintWriter wr = new PrintWriter(osw);
             wr.write(buffer.toString());
@@ -65,10 +61,7 @@ public class HttpClient {
             Log.i("uploadFile", "HTTP Response is : "
                     + serverResponseMessage + ": " + serverResponseCode);
 
-            //close the streams //
             fileInputStream.close();
-            // dos.flush();
-            // dos.close();
         } catch (MalformedURLException ex) {
             Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
         } catch (Exception e) {
