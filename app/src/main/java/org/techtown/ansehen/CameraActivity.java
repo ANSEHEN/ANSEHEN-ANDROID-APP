@@ -32,6 +32,10 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        Intent intent = getIntent();
+        url= intent.getExtras().getString("RegisterActivity_phoneNum");
+        Log.e(TAG,"CameraActivity_phonenum : "+url);
+
         //iv =(ImageView)this.findViewById(R.id.iv);
         setup();
     }
@@ -54,7 +58,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                url ="tmp_"+String.valueOf(System.currentTimeMillis())+".png";
+                //url ="tmp_"+String.valueOf(System.currentTimeMillis())+".png";
 
                 mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),url));
 
@@ -91,7 +95,7 @@ public class CameraActivity extends AppCompatActivity {
             int numFace =detector.findFaces(bitmap, faces);
             Log.e(TAG,"number of face : "+numFace);
             // if(numFace>0)
-            {
+                {
                 new Thread(new Runnable() {
 
                     public void run() {

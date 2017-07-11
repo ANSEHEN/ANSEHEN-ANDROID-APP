@@ -21,7 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
     String loginName;
     String loginPw;
     String loginPhone;
-    String phoneNum;
+    String filename;
 
 
     String getPhoneNumber()
@@ -49,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
                 loginName = nameText.getText().toString().trim();
                 loginPw = pwText.getText().toString().trim();
                 loginPhone = phoneText.getText().toString().trim();
+                filename=getPhoneNumber()+"__"+String.valueOf(System.currentTimeMillis())+".png";
 
                 new Thread(new Runnable() {
 
@@ -77,11 +78,14 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.e(TAG,"phoneNum : "+phoneNum);
 
                         HttpClient http = new HttpClient();
-                        http.putUserInfo(name,password,phoneNum,inputPhone);
+                        http.putUserInfo(name,password,phoneNum,inputPhone,filename);
                     }
                 }).start();
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
+                registerIntent.putExtra("RegisterActivity_phoneNum",filename);
                 RegisterActivity.this.startActivity(registerIntent);
+                Log.e(TAG,"phoneNum : "+filename);
+
             }
         });
     }
