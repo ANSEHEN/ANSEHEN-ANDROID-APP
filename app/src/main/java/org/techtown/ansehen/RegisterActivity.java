@@ -76,8 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.e(TAG,"inputPhone : "+inputPhone);
                         Log.e(TAG,"phoneNum : "+phoneNum);
 
-                        httpClient http = new httpClient();
-                        http.HttpFileUpload(name,password,phoneNum,inputPhone);
+                        HttpClient http = new HttpClient();
+                        http.putUserInfo(name,password,phoneNum,inputPhone);
                     }
                 }).start();
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
