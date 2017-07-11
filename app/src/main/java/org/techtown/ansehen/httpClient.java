@@ -6,6 +6,8 @@ package org.techtown.ansehen;
 
 import android.util.Log;
 
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -13,22 +15,27 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by bit on 2017-07-05.
  */
-public class httpClient {
-    private static final String urlPath = "http://13.124.164.203/register.php";
+public class HttpClient {
+    private static final String urlPath_register = "http://13.124.164.203/register.php";
+    private static final String urlPath_upload = "http://13.124.164.203/UploadToServer.php";
     private FileInputStream fileInputStream =null;
     private URL connectUrl =null;
     int serverResponseCode = 0;
     String lineEnd = "\r\n";
     String twoHyphens = "--";
     String boundary ="*****";
-    public void HttpFileUpload(String name, String pw,String phoneNum, String inputPhone)
+
+
+    public void putUserInfo(String name, String pw,String phoneNum, String inputPhone)
     {
         try
         {
-            connectUrl=new URL(urlPath);
+            connectUrl=new URL(urlPath_register);
             HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -65,6 +72,95 @@ public class httpClient {
         } catch (Exception e) {
             Log.d("Test", "exception " + e.getMessage());
         }
+    }
+
+
+
+    public void HttpFileUpload(String fileName)
+    {
+        try
+        {
+            File sourceFile = new File(fileName);
+            fileInputStream=new FileInputStream(sourceFile);
+            connectUrl=new URL(urlPath_upload );
+
+
+            Log.d("Test","fileInputStream is "+fileInputStream);
+
+            HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection","Keep-Alive");
+            conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            conn.setRequestProperty("uploaded_file", fileName);
+
+
+
+
+            // write data
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + fileName + "\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+
+
+            int bytesAvailable = fileInputStream.available();
+            int maxBufferSize = 100*1024*1024;
+            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+
+            byte[] buffer = new byte[bufferSize];
+            int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+            Log.e(TAG,"image byte is " + bytesRead);
+
+// read image
+            int i=0;
+            while (bytesRead > 0) {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                if(i==0)
+                    Log.d("Test","start");
+                i++;
+            }
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+// close streams
+            Log.e("Test" , "File is written");
+            serverResponseCode = conn.getResponseCode();
+
+            String serverResponseMessage = conn.getResponseMessage();
+
+            Log.i("uploadFile", "HTTP Response is : "
+
+                    + serverResponseMessage + ": " + serverResponseCode);
+
+
+            //close the streams //
+
+            fileInputStream.close();
+
+            dos.flush();
+
+            dos.close();
+
+
+
+        } catch (MalformedURLException ex) {
+
+            Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
+
+        } catch (Exception e) {
+            Log.d("Test", "exception " + e.getMessage());
+        }
+
+
+
     }
 }
 
