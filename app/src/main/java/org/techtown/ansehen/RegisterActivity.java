@@ -22,7 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
     String loginPw;
     String loginPhone;
     String filename;
-
+//
 
     String getPhoneNumber()
     {
