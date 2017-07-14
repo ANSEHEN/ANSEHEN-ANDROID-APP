@@ -31,7 +31,7 @@ public class HttpClient {
     String boundary ="*****";
 
 
-    public void putUserInfo(String name, String pw,String phoneNum, String inputPhone,String filename)
+    public void putUserInfo(String name, String pw,String phoneNum, String inputPhone,String filename,String primaryKey)
     {
         try
         {
@@ -49,7 +49,8 @@ public class HttpClient {
             buffer.append("userInputPhoneNum").append("=").append(inputPhone).append("&");
             buffer.append("userName").append("=").append(name).append("&");
             buffer.append("userPw").append("=").append(pw).append("&");
-            buffer.append("fileName").append("=").append(filename);
+            buffer.append("fileName").append("=").append(filename).append("&");
+            buffer.append("uniqueKey").append("=").append(primaryKey);
 
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
             PrintWriter wr = new PrintWriter(osw);

@@ -22,12 +22,20 @@ public class RegisterActivity extends AppCompatActivity {
     String loginPw;
     String loginPhone;
     String filename;
+    String phoneNum;
+    String  primaryKey;
 //
 
     String getPhoneNumber()
     {
         TelephonyManager mgr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        return mgr.getLine1Number();
+        phoneNum = mgr.getLine1Number();
+        if(phoneNum.startsWith("+82"))
+        {
+            phoneNum = phoneNum.replace("+82","0");
+            return phoneNum;
+        }
+        return phoneNum;//mgr.getLine1Number();
     }
 
     @Override
@@ -39,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         nameText = (EditText)findViewById(R.id.nameText);
         pwText = (EditText)findViewById(R.id.pwText);
         phoneText = (EditText)findViewById(R.id.phoneText);
+        primaryKey = String.valueOf(System.currentTimeMillis());
 
 
         Button submit = (Button)findViewById(R.id.registerButton);
@@ -49,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
                 loginName = nameText.getText().toString().trim();
                 loginPw = pwText.getText().toString().trim();
                 loginPhone = phoneText.getText().toString().trim();
-                filename=getPhoneNumber()+"__"+String.valueOf(System.currentTimeMillis())+".png";
+                filename=getPhoneNumber()+"__"+primaryKey+".png";
 
                 new Thread(new Runnable() {
 
@@ -76,9 +85,10 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.e(TAG,"passWord : "+password);
                         Log.e(TAG,"inputPhone : "+inputPhone);
                         Log.e(TAG,"phoneNum : "+phoneNum);
+                        Log.e(TAG,"primaryKey : "+primaryKey);
 
                         HttpClient http = new HttpClient();
-                        http.putUserInfo(name,password,phoneNum,inputPhone,filename);
+                        http.putUserInfo(name,password,phoneNum,inputPhone,filename,primaryKey);
                     }
                 }).start();
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
