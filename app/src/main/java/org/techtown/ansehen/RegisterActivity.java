@@ -35,7 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
             phoneNum = phoneNum.replace("+82","0");
             return phoneNum;
         }
-        return phoneNum;//mgr.getLine1Number();
+        return phoneNum;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
                 loginName = nameText.getText().toString().trim();
                 loginPw = pwText.getText().toString().trim();
                 loginPhone = phoneText.getText().toString().trim();
-                filename=getPhoneNumber()+"__"+primaryKey+".png";
+                filename=getPhoneNumber()+"__"+primaryKey+".jpg";
 
                 new Thread(new Runnable() {
 
