@@ -25,6 +25,7 @@ public class CameraActivity extends AppCompatActivity {
     Button btn = null;
     ImageView iv = null;
     String url;
+    int status;
 
 
     @Override
@@ -41,7 +42,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void camButton(){
-        Intent camintent = new Intent(CameraActivity.this, MainActivity.class);
+        Intent camintent = new Intent(CameraActivity.this, TMapActivity.class);
         startActivity(camintent);
     }
 
@@ -49,6 +50,9 @@ public class CameraActivity extends AppCompatActivity {
     {
         btn = (Button)findViewById(R.id.cameraButton);
         // iv = (ImageView)findViewById(R.id.iv);
+
+
+
 
 
 
@@ -96,24 +100,33 @@ public class CameraActivity extends AppCompatActivity {
             Log.e(TAG,"number of face : "+numFace);
             if(numFace>0)
             {
-                    new Thread(new Runnable() {
 
-                        public void run() {
+                new Thread(new Runnable() {
 
-                            runOnUiThread(new Runnable() {
+                    public void run() {
 
-                                public void run() {
-                                }
-                            });
-                            HttpClient httpClient = new HttpClient();
-                            httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
+                        runOnUiThread(new Runnable() {
 
-                        }
-                    }).start();
-                    //camButton();
+                            public void run() {
+                            }
+                        });
+
+                        HttpClient httpClient = new HttpClient();
+                        httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
+
+                    }
+                }).start();
+
+                Intent CameraIntent = new Intent(CameraActivity.this, TMapActivity.class);
+                startActivity(CameraIntent);
+
+
+
+                //
+                //camButton();
             }
             else
-              setup();
+                setup();
         }
 
         if(requestCode!=RESULT_OK)
