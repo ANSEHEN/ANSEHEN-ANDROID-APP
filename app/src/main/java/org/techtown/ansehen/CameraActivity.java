@@ -7,6 +7,9 @@ import android.media.FaceDetector;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,11 +17,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity  {
 
     private static final int PICK_FROM_CAMERA =0;
     private Uri mImageCaptureUri;
@@ -28,10 +41,13 @@ public class CameraActivity extends AppCompatActivity {
     int status;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+
 
         Intent intent = getIntent();
         url= intent.getExtras().getString("RegisterActivity_phoneNum");
@@ -40,6 +56,8 @@ public class CameraActivity extends AppCompatActivity {
         //iv =(ImageView)this.findViewById(R.id.iv);
         setup();
     }
+
+
 
     public void camButton(){
         Intent camintent = new Intent(CameraActivity.this, TMapActivity.class);
