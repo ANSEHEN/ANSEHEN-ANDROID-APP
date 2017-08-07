@@ -93,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }).start();
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
                 registerIntent.putExtra("RegisterActivity_phoneNum",filename);
+                registerIntent.putExtra("primaryKey",primaryKey);
                 RegisterActivity.this.startActivity(registerIntent);
                 Log.e(TAG,"phoneNum : "+filename);
 

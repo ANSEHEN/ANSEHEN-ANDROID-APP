@@ -70,10 +70,15 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     private List<Beacon> beaconList = new ArrayList<>();
     String dataString="\0";
 
+    String primaryKey;
+    CCTVBeaconManager CBM;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
+
+        Intent intent = getIntent();
+        primaryKey=intent.getExtras().getString("primaryKey");
         Intent Cameraintent=new Intent(this.getIntent());
 
         //
@@ -434,6 +439,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             dataString="";
+            String temp="";
             //textView.setText("");
             //Log.i("Handler Start","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             // 비콘의 아이디와 거리를 측정하여 textView에 넣는다.
@@ -441,8 +447,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 Log.i("beaconList","--------------------------------------------------------------------");
                 dataString.concat("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
                 Log.i("data: ",beacon.getId2()+"/"+"Distance: "+ Double.parseDouble(String.format("%.3f", beacon.getDistance())));
+
+                temp=(""+beacon.getId2());
+                Log.i("in for temp:",temp);
                 //textView.append("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
             }
+            Log.i("out for temp:",temp);
             //Log.i("Handler End","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             // 자기 자신을 1초마다 호출
             handler.sendEmptyMessageDelayed(0, 5000);
