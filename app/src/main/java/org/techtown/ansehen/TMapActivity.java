@@ -79,6 +79,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         Intent intent = getIntent();
         primaryKey=intent.getExtras().getString("primaryKey");
+        CBM.addPrimaryKey(primaryKey);
         Intent Cameraintent=new Intent(this.getIntent());
 
         //
@@ -450,9 +451,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
                 temp=(""+beacon.getId2());
                 Log.i("in for temp:",temp);
+                CBM.compareCctvId(temp);
                 //textView.append("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
             }
-            Log.i("out for temp:",temp);
             //Log.i("Handler End","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             // 자기 자신을 1초마다 호출
             handler.sendEmptyMessageDelayed(0, 5000);
