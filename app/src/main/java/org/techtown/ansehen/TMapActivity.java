@@ -49,6 +49,9 @@ import org.altbeacon.beacon.Region;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.techtown.ansehen.CCTVBeaconManager;
+
+import static android.content.ContentValues.TAG;
 
 public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
@@ -71,19 +74,21 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     String dataString="\0";
 
     String primaryKey;
-    CCTVBeaconManager CBM;
+    CCTVBeaconManager CBM = new CCTVBeaconManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
-
-        Intent intent = getIntent();
-        primaryKey=intent.getExtras().getString("primaryKey");
-        CBM.addPrimaryKey(primaryKey);
-        Intent Cameraintent=new Intent(this.getIntent());
+        Intent intent = new Intent(this.getIntent());
+        primaryKey=intent.getExtras().getString("primarykey");
+        Log.e(TAG,"TMAP primaryKey : "+primaryKey);
+        //Intent Cameraintent=new Intent(this.getIntent());
 
         //
-        Log.i("BeaconThread Create","----------------------------------------------------------#########################");
+        Log.i("Point 1.","----------------------------------------------------------#########################");
+        Log.i("primaryKey",primaryKey);
+        CBM.AddPrimaryKey(primaryKey);
+        Log.i("Point 2.","----------------------------------------------------------#########################");
         // 실제로 비콘을 탐지하기 위한 비콘매니저 객체를 초기화
         beaconManager = BeaconManager.getInstanceForApplication(this);
         //textView = (TextView)findViewById(R.id.Textview);

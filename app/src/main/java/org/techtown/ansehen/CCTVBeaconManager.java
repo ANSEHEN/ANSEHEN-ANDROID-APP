@@ -10,10 +10,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class CCTVBeaconManager{
-    private String Array_CctvId[] = new String [20];
-    int num;
-    String primaryKey;
-    public void addPrimaryKey(String beaconTemp){
+    private String[] Array_CctvId = new String [20];
+    private int num;
+    private String primaryKey;
+    public void CCTVBeaconManager(){
+        num=0;
+    }
+    public void transportCctv(String beaconTemp){
+        Log.i("transport","-----------------------------------------------------------------");
         final String urlPath_register = "http://13.124.164.203/BeaconSearch.php";
         URL connectUrl =null;
         primaryKey=beaconTemp;
@@ -55,6 +59,10 @@ public class CCTVBeaconManager{
         } catch (Exception e) {
             Log.d("Test", "exception " + e.getMessage());
         }
+        Log.i("transport end","-----------------------------------------------------------------");
+    }
+    public void AddPrimaryKey(String temp){
+        primaryKey=temp;
     }
     public void addCctvId(String temp){
         Array_CctvId[num++]=temp;
@@ -63,9 +71,12 @@ public class CCTVBeaconManager{
         int i;
         for(i=0;i<num;i++){
             if(temp.equals(Array_CctvId[i])){
+                Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 return;
             }
         }
-        addCctvId(temp);
+        Log.i("add CCTV","-------------------------------------------");
+        this.addCctvId(temp);
+        this.transportCctv(temp);
     }
 }

@@ -55,7 +55,7 @@ public class CameraActivity extends AppCompatActivity  {
         url= intent.getExtras().getString("RegisterActivity_phoneNum");
         primaryKey=intent.getExtras().getString("primaryKey");
         Log.e(TAG,"CameraActivity_phonenum : "+url);
-
+        Log.e(TAG,"primaryKey : "+primaryKey);
         //iv =(ImageView)this.findViewById(R.id.iv);
         setup();
     }
@@ -139,7 +139,7 @@ public class CameraActivity extends AppCompatActivity  {
                 }).start();
 
                 Intent CameraIntent = new Intent(CameraActivity.this, TMapActivity.class);
-                CameraIntent.putExtra("key",primaryKey);
+                CameraIntent.putExtra("primarykey",primaryKey);
                 startActivity(CameraIntent);
 
 
