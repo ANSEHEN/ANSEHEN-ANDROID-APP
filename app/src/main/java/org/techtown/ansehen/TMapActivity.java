@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.estimote.sdk.SystemRequirementsChecker;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
@@ -86,6 +87,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         //
         Log.i("Point 1.","----------------------------------------------------------#########################");
+        CBM.beaconTimeCheck();
         Log.i("primaryKey",primaryKey);
         CBM.AddPrimaryKey(primaryKey);
         Log.i("Point 2.","----------------------------------------------------------#########################");
@@ -407,6 +409,11 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
     //
     @Override
+    protected void onResume(){
+        super.onResume();
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
+    }
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         beaconManager.unbind(this);
@@ -450,13 +457,31 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             //Log.i("Handler Start","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             // 비콘의 아이디와 거리를 측정하여 textView에 넣는다.
             for(Beacon beacon : beaconList){
+                int x=0;
                 Log.i("beaconList","--------------------------------------------------------------------");
                 dataString.concat("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
                 Log.i("data: ",beacon.getId2()+"/"+"Distance: "+ Double.parseDouble(String.format("%.3f", beacon.getDistance())));
 
                 temp=(""+beacon.getId2());
                 Log.i("in for temp:",temp);
-                CBM.compareCctvId(temp);
+                x=CBM.compareCctvId(temp);
+
+                final String tempp=temp;
+                if(x==1){
+                    new Thread(new Runnable() {
+
+                        public void run() {
+
+                            runOnUiThread(new Runnable() {
+
+                                public void run() {
+                                }
+                            });
+                            CBM.transportCctv(tempp);
+
+                        }
+                    }).start();
+                }
                 //textView.append("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
             }
             //Log.i("Handler End","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
