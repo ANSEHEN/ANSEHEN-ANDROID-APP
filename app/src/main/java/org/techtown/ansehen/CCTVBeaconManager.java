@@ -1,5 +1,6 @@
 package org.techtown.ansehen;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -11,12 +12,8 @@ import java.net.URL;
 import java.sql.Time;
 
 class TimeManagement{
-    public long start;
-    public long end;
-
-    void TimeStartReset(){
-        start=0;
-    }
+    private long start;
+    private long end;
     void TimeStart(){
         start=System.currentTimeMillis();
     }
@@ -36,19 +33,34 @@ public class CCTVBeaconManager{
     private String[] Array_CctvId = new String [20];
     private int num;
     private String primaryKey;
-    TimeManagement tm[];
+    private TimeManagement[] tm=new TimeManagement[20];
     //public int timeCount[];
-    public void CCTVBeaconManager(){
+    public CCTVBeaconManager(){
         num=0;
     }
     public void beaconTimeCheck(){
         while(true) {
             int i;
             for (i = 0; i < num; i++) {
-                if (tm[i].TimeEnd() > 15) {
+                if ( tm[i].TimeEnd() > 15 ) {
                     this.beaconDisconnect(Array_CctvId[i]);
+                    //tm[i] 공간 소멸하고 배열 정리하기
+                    tm[i]=null;
+                    Array_CctvId[i]=null;
+                    if(i != (num-1)){
+                        for(int j=i;j<(num-1);j++)
+                        {
+                            tm[j]=tm[j+1];
+                            Array_CctvId[j]=Array_CctvId[j+1];
+                        }
+                    }
+                    tm[num-1]=null;
+                    Array_CctvId[num-1]=null;
+                    num--;
+                    //Array_Cctvld[i] 공간 소멸하고 배열 정리하기
                 }
             }
+            SystemClock.sleep(1000);
         }
     }
     public void beaconDisconnect(String beaconTemp){
@@ -142,9 +154,11 @@ public class CCTVBeaconManager{
     public void AddPrimaryKey(String temp){
         primaryKey=temp;
     }
-    public void addCctvId(String temp){
-        Array_CctvId[num++]=temp;
-        tm[(num-1)].TimeStart();
+    public synchronized void addCctvId(String temp){
+        Log.i("num",""+num);
+        Array_CctvId[num]=temp;
+        tm[num]=new TimeManagement();
+        tm[num++].TimeStart();
     }
     public int compareCctvId(String temp){
         int i;
