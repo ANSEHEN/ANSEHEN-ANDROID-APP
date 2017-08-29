@@ -233,6 +233,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             public void onClick(View view) {
                 if (start != null && end != null) {
                     searchRoute(start, end);
+                    Log.i("******Start",""+start.toString());
+                    Log.i("******End",""+end.toString());
                     start = end = null;
                 } else {
                     Toast.makeText(TMapActivity.this, "start or end is null", Toast.LENGTH_SHORT).show();
@@ -241,7 +243,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         });
     }
 
-    private void searchRoute(TMapPoint start, TMapPoint end) {
+    private void searchRoute(TMapPoint start, final TMapPoint end) {
         TMapData data = new TMapData();
         data.findPathData(start, end, new TMapData.FindPathDataListenerCallback() {
             @Override
@@ -255,7 +257,26 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                         Bitmap s = ((BitmapDrawable) ContextCompat.getDrawable(TMapActivity.this, android.R.drawable.ic_input_delete)).getBitmap();
                         Bitmap e = ((BitmapDrawable) ContextCompat.getDrawable(TMapActivity.this, android.R.drawable.ic_input_get)).getBitmap();
                         mapView.setTMapPathIcon(s, e);
+                        final MapPath mapManager=new MapPath();
+                        Log.i("primaryKey",""+primaryKey);
+                        mapManager.addPrimaryKey(primaryKey);
+                        mapManager.addPoint(path.getLinePoint());
 
+                        mapManager.addSizeNum();
+                        mapManager.addEndPoint(end);
+                        mapManager.setAllPath();
+                        new Thread(new Runnable() {
+
+                            public void run() {
+
+                                runOnUiThread(new Runnable() {
+
+                                    public void run() {
+                                    }
+                                });
+                                mapManager.allPathTransport();
+                            }
+                        }).start();
                     }
                 });
             }
@@ -472,7 +493,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             // 비콘의 아이디와 거리를 측정하여 textView에 넣는다.
             for(Beacon beacon : beaconList){
                 int x=0;
-                Log.i("beaconList","--------------------------------------------------------------------");
+                //Log.i("beaconList","--------------------------------------------------------------------");
                 dataString.concat("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
                 Log.i("data: ",beacon.getId2()+"/"+"Distance: "+ Double.parseDouble(String.format("%.3f", beacon.getDistance())));
 

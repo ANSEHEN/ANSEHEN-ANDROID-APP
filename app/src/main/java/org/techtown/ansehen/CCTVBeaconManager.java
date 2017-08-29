@@ -22,7 +22,7 @@ class TimeManagement{
             int time;
             end=System.currentTimeMillis();
             time=((int)(end-start)/1000);
-            Log.i("Timer time:",""+time+"초");
+            //Log.i("Timer time:",""+time+"초");
             return time;
         }
         return 0;
@@ -164,7 +164,7 @@ public class CCTVBeaconManager{
         int i;
         for(i=0;i<num;i++){
             if(temp.equals(Array_CctvId[i])){
-                Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                //Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 tm[i].TimeStart();
                 //timeCount[i]=0;
                 return 0;
