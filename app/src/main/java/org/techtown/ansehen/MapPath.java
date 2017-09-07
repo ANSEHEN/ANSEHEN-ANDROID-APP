@@ -25,13 +25,13 @@ public class MapPath {
     public void addPrimaryKey(String temp){
         primaryKey=temp;
     }
-    public void addEndPoint(TMapPoint temp){end_p=(temp.getLongitude()+","+temp.getLatitude());}
+    public void addEndPoint(TMapPoint temp){end_p=(temp.getLatitude()+","+temp.getLongitude());}
     public void addPoint(ArrayList<TMapPoint> temp){
         map_Path=temp;
     }
     public void addSizeNum(){
         size_num=map_Path.size();
-    }
+    }   
     public void setAllPath(){
         Log.i("SetAllPath","Start: -----------------------------");
         for(int i=0;i<size_num;i++){

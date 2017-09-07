@@ -91,10 +91,14 @@ public class RegisterActivity extends AppCompatActivity {
                         http.putUserInfo(name,password,phoneNum,inputPhone,filename,primaryKey);
                     }
                 }).start();
+
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
                 registerIntent.putExtra("RegisterActivity_phoneNum",filename);
                 registerIntent.putExtra("primaryKey",primaryKey);
+                registerIntent.putExtra("password",loginPw);
+                registerIntent.putExtra("phonenumber",loginPhone);
                 RegisterActivity.this.startActivity(registerIntent);
+
                 Log.e(TAG,"phoneNum : "+filename);
 
             }

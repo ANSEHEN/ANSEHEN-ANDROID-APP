@@ -39,7 +39,8 @@ public class CameraActivity extends AppCompatActivity  {
     ImageView iv = null;
     String url;
     String primaryKey;
-    int status;
+    String password;
+    String phonenumber;
 
 
 
@@ -54,6 +55,8 @@ public class CameraActivity extends AppCompatActivity  {
         Intent intent = getIntent();
         url= intent.getExtras().getString("RegisterActivity_phoneNum");
         primaryKey=intent.getExtras().getString("primaryKey");
+        password=intent.getExtras().getString("password");
+        phonenumber=intent.getExtras().getString("phonenumber");
         Log.e(TAG,"CameraActivity_phonenum : "+url);
         Log.e(TAG,"primaryKey : "+primaryKey);
         //iv =(ImageView)this.findViewById(R.id.iv);
@@ -138,8 +141,11 @@ public class CameraActivity extends AppCompatActivity  {
                     }
                 }).start();
 
+
                 Intent CameraIntent = new Intent(CameraActivity.this, TMapActivity.class);
                 CameraIntent.putExtra("primarykey",primaryKey);
+                CameraIntent.putExtra("password",password);
+                CameraIntent.putExtra("phonenumber",phonenumber);
                 startActivity(CameraIntent);
 
 

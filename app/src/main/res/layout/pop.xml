@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0cfffff">
+    <TextView
+        android:drawableStart="@drawable/ic_security_black_24dp"
+        android:drawableLeft="@drawable/ic_security_black_24dp"
+        android:text="CCTV 얼굴 미확인"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="5dp"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+    <TextView
+        android:drawableStart="@drawable/ic_cancel_black_24dp"
+        android:drawableLeft="@drawable/ic_cancel_black_24dp"
+        android:text="  CCTV 위치 확인, 얼굴 미확인"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="#fff00000"
+        android:background="#ffffffff"
+        android:padding="5dp"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#ffffffff"
+        android:padding="5dp"
+        android:text="  CCTV 얼굴 미확인으로 신원확인을 실시합니다.\n  입력하셨던 비밀번호를 입력해주세요\n 시간 초과 시 지정된 전화번호로 연락이 진행됩니다."
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="15dp" />
+
+    <EditText
+        android:id="@+id/popPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="@color/colorPrimaryDark"
+        tools:text="password" />
+
+    <Button
+        android:id="@+id/certain_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="100dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="입력완료"
+        android:textColor="#ffffffff"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/timeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="#ffffffff"
+        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp" />
+    />
+
+</LinearLayout>

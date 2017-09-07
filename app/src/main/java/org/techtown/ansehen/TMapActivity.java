@@ -75,6 +75,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     String dataString="\0";
 
     String primaryKey;
+    String password;
+    String phonenumber;
     CCTVBeaconManager CBM = new CCTVBeaconManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         setContentView(R.layout.activity_tmap);
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primarykey");
+        password=intent.getExtras().getString("password");
+        phonenumber=intent.getExtras().getString("phonenumber");
+
         Log.e(TAG,"TMAP primaryKey : "+primaryKey);
         //Intent Cameraintent=new Intent(this.getIntent());
 
@@ -115,7 +120,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
         beaconManager.bind(this);
-        handler.sendEmptyMessage(0);
+
 
         /*
         new Thread(new Runnable() {
@@ -235,6 +240,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     searchRoute(start, end);
                     Log.i("******Start",""+start.toString());
                     Log.i("******End",""+end.toString());
+                    handler.sendEmptyMessage(0);
+                    mhandler.sendEmptyMessage(0);
                     start = end = null;
                 } else {
                     Toast.makeText(TMapActivity.this, "start or end is null", Toast.LENGTH_SHORT).show();
@@ -484,6 +491,17 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         handler.sendEmptyMessage(0);
     }
     */
+    Handler mhandler = new Handler() {
+        public void handleMessage(Message msg) {
+                Intent popTrigerIntent = new Intent(TMapActivity.this, PopTriger.class);
+                popTrigerIntent.putExtra("phonenumber",phonenumber);
+                popTrigerIntent.putExtra("primaryKey",primaryKey);
+                popTrigerIntent.putExtra("password",password);
+                TMapActivity.this.startActivity(popTrigerIntent);
+            // 자기 자신을 10초마다 호출
+            mhandler.sendEmptyMessageDelayed(0, 10000);
+        }
+    };
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             dataString="";
