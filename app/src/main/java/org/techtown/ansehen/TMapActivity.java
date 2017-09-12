@@ -1,6 +1,7 @@
 package org.techtown.ansehen;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,7 +15,9 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +50,12 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,9 +64,10 @@ import org.techtown.ansehen.CCTVBeaconManager;
 import static android.content.ContentValues.TAG;
 
 public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
+    private GpsInfo gps;
 
+    String temp_s="NO";
     TMapView mapView=null;
-
     LocationManager mLM;
     String mProvider = LocationManager.NETWORK_PROVIDER;
 
@@ -77,7 +87,23 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     String primaryKey;
     String password;
     String phonenumber;
+
+    String result_p="NULL";
+
     CCTVBeaconManager CBM = new CCTVBeaconManager();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1111){
+            if(resultCode==1234) {
+                temp_s=data.getStringExtra("return");
+                if(temp_s.equals("OK")) {
+                    Log.i("test_s","-----------------");
+                    mhandler.sendEmptyMessage(0);
+                }
+            }
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +112,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         primaryKey=intent.getExtras().getString("primarykey");
         password=intent.getExtras().getString("password");
         phonenumber=intent.getExtras().getString("phonenumber");
-
+        Log.i("In TMap: phonenum",""+phonenumber);
         Log.e(TAG,"TMAP primaryKey : "+primaryKey);
         //Intent Cameraintent=new Intent(this.getIntent());
 
@@ -215,7 +241,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 //          addMarker(point.getLatitude(), point.getLongitude(), "My Marker");
             }
         });
-
         btn = (Button) findViewById(R.id.btn_search);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,14 +267,13 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     Log.i("******End",""+end.toString());
                     handler.sendEmptyMessage(0);
                     mhandler.sendEmptyMessage(0);
-                    start = end = null;
+                    //start = end = null;
                 } else {
                     Toast.makeText(TMapActivity.this, "start or end is null", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
     private void searchRoute(TMapPoint start, final TMapPoint end) {
         TMapData data = new TMapData();
         data.findPathData(start, end, new TMapData.FindPathDataListenerCallback() {
@@ -493,12 +517,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     */
     Handler mhandler = new Handler() {
         public void handleMessage(Message msg) {
-                Intent popTrigerIntent = new Intent(TMapActivity.this, PopTriger.class);
-                popTrigerIntent.putExtra("phonenumber",phonenumber);
-                popTrigerIntent.putExtra("primaryKey",primaryKey);
-                popTrigerIntent.putExtra("password",password);
-                TMapActivity.this.startActivity(popTrigerIntent);
-            // 자기 자신을 10초마다 호출
+            GetData task = new GetData();
+            task.execute("http://13.124.164.203/android_test.php");
+            //startActivity(new Intent(TMapActivity.this, Pop.class));
             mhandler.sendEmptyMessageDelayed(0, 10000);
         }
     };
@@ -542,6 +563,137 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             handler.sendEmptyMessageDelayed(0, 5000);
         }
     };
+    private class GetData extends AsyncTask<String, Void, String> {
+        ProgressDialog progressDialog;
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = ProgressDialog.show(TMapActivity.this,
+                    "Please Wait", null, true, true);
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            //지워도 됨
+            SystemClock.sleep(1000);
+            //
+            progressDialog.dismiss();
+            Log.d(TAG, "response  - " + result);
+            //String temp=result.substring(indexOf,1);
+            Log.i("P2",""+result);
+            int indexOf=result.indexOf("result");
+            result_p= result.substring(indexOf+10,indexOf+11);
+
+            //result 반환값 설정 0(진행중) 1(진행완료) 2(CCTV 얼굴 미확인,팝업발생)
+            if(result_p.equals("0")) {
+                //startActivity(new Intent(TMapActivity.this, Pop.class));
+                Log.i("result 0","진행중");
+                gps = new GpsInfo(TMapActivity.this);
+                // GPS 사용유무 가져오기
+                if (gps.isGetLocation()) {
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    Log.i("lat,lon",latitude+","+longitude);
+                    Log.i("lat,lon",end.getLatitude()+","+end.getLongitude());
+                    double t_lat=Math.abs(latitude-end.getLatitude());
+                    double t_lon=Math.abs(longitude-end.getLongitude());
+                    if((t_lat+t_lon)<0.00025) {
+                        //목적지 도착
+                        mhandler.removeMessages(0);
+                        handler.removeMessages(0);
+                        Intent endIntent = new Intent(TMapActivity.this, Pop.class);
+                        TMapActivity.this.startActivity(endIntent);
+                    }
+                    Toast.makeText(
+                            getApplicationContext(),"당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,Toast.LENGTH_LONG).show();
+                }else {
+                    // GPS 를 사용할수 없으므로
+                    gps.showSettingsAlert();
+                }
+
+            }
+            else if(result_p.equals("1")){
+                Log.i("result 1","진행 완료 ");
+            }
+            else if(result_p.equals("2")){
+                Log.i("result 2","CCTV 얼굴 미확인, 팝업 실행");
+                Intent tmapIntent = new Intent(TMapActivity.this, Pop.class);
+                tmapIntent.putExtra("password", password);
+                tmapIntent.putExtra("phonenumber", phonenumber);
+                //tmapIntent.putExtra("handler", (Parcelable) mhandler);
+                TMapActivity.this.startActivityForResult(tmapIntent,1111);
+                mhandler.removeMessages(0);
+            }
+            Log.i("반환된 result값",""+result_p);
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.i("transport","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            String serverURL = params[0];
+            String uniqueKey = primaryKey;
+            String postParameters = "unique_key=" + uniqueKey;
+            try {
+
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.connect();
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+
+                bufferedReader.close();
+
+
+                return sb.toString().trim();
+
+
+            } catch (Exception e) {
+
+                Log.d(TAG, "InsertData: Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+        }
+    }
 }
 
 

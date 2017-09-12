@@ -1,6 +1,7 @@
 package org.techtown.ansehen;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,24 +30,29 @@ import android.widget.Toast;
  */
 
 public class Pop extends Activity {
+    //Handler test_temp;
     EditText popPassword;
     TextView timeText;
     String passwordTemp;
     String password = "1234";
     int value = 0;
     String tel = "tel:01075651050";
-    /*
-    Intent intent = new Intent(this.getIntent());
-    password=intent.getExtras().getString("password");
-    tel=intent.getExtras().getString("phonenumber");
-    */
+    String temp_s=new String("tel:");
+    String tel_temp;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.pop);
 
         timeText = (TextView) findViewById(R.id.timeText);
         popPassword = (EditText) findViewById(R.id.popPassword);
+
+        Intent intent = new Intent(this.getIntent());
+        password=intent.getExtras().getString("password");
+        tel_temp=intent.getExtras().getString("phonenumber");
+        //test_temp=intent.getExtras().getParcelable("handler");
+        tel=temp_s.concat(tel_temp);
 
         final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         mHandler.sendEmptyMessage(0);
@@ -64,6 +71,11 @@ public class Pop extends Activity {
                     passwordTemp = popPassword.getText().toString().trim();
                     if (passwordTemp.equals(password)) {
                         mHandler.removeMessages(0);
+                        //test_temp.sendEmptyMessage(0);
+                        Intent intent_test=new Intent();
+                        intent_test.putExtra("return","OK");
+                        setResult(1234,intent_test);
+                        Log.i("in Pop","String: "+"OK");
                         finish();
                     } else {
                         vibrator.vibrate(500);

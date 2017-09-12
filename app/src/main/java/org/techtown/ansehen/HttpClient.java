@@ -90,13 +90,8 @@ public class HttpClient {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection","Keep-Alive");
             conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             conn.setRequestProperty("uploaded_file", fileName);
-
-
-
-
             // write data
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(twoHyphens + boundary + lineEnd);
