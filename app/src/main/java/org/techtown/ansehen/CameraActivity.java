@@ -10,12 +10,14 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -41,7 +43,8 @@ public class CameraActivity extends AppCompatActivity  {
     String primaryKey;
     String password;
     String phonenumber;
-
+    String name;
+    String myphonenum;
 
 
 
@@ -57,6 +60,8 @@ public class CameraActivity extends AppCompatActivity  {
         primaryKey=intent.getExtras().getString("primaryKey");
         password=intent.getExtras().getString("password");
         phonenumber=intent.getExtras().getString("phonenumber");
+        myphonenum=intent.getExtras().getString("myphonenum");
+        name=intent.getExtras().getString("name");
         Log.e(TAG,"CameraActivity_phonenum : "+url);
         Log.e(TAG,"primaryKey : "+primaryKey);
         //iv =(ImageView)this.findViewById(R.id.iv);
@@ -74,12 +79,6 @@ public class CameraActivity extends AppCompatActivity  {
     {
         btn = (Button)findViewById(R.id.cameraButton);
         // iv = (ImageView)findViewById(R.id.iv);
-
-
-
-
-
-
         btn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -89,17 +88,12 @@ public class CameraActivity extends AppCompatActivity  {
                 //url ="tmp_"+String.valueOf(System.currentTimeMillis())+".png";
 
                 mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),url));
-
                 Log.e(TAG, "before taking photo");
-
                 intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,mImageCaptureUri);
                 startActivityForResult(intent,PICK_FROM_CAMERA);
                 Log.e(TAG, "take photo");
-
             }
         });
-
-
     }
 
     @Override
@@ -108,55 +102,61 @@ public class CameraActivity extends AppCompatActivity  {
         Log.e(TAG,"on ActivityResult");
         if(requestCode==PICK_FROM_CAMERA) //?쇨뎬 ?몄떇 遺遺??⑥닔 ?ㅼ뼱媛?遺遺?
         {
-            Log.e(TAG,"lala");
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig= Bitmap.Config.RGB_565;
             options.inScaled=false;
             options.inDither=false;
-            Bitmap bitmap=BitmapFactory.decodeFile(mImageCaptureUri.getPath(),options);
-            Log.e(TAG,"path~~ : "+mImageCaptureUri.getPath());
-            //iv = (ImageView)findViewById(R.id.iv);
-            //iv.setImageBitmap(bitmap);
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(mImageCaptureUri.getPath(), options);
+                    Log.e(TAG, "path~~ : " + mImageCaptureUri.getPath());
+                    //iv = (ImageView)findViewById(R.id.iv);
+                    //iv.setImageBitmap(bitmap);
 
-            FaceDetector.Face[] faces = new FaceDetector.Face[2];
-            FaceDetector detector = new FaceDetector(bitmap.getWidth(), bitmap.getHeight(), faces.length);
-            int numFace =detector.findFaces(bitmap, faces);
-            Log.e(TAG,"number of face : "+numFace);
-            if(numFace>0)
-            {
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-
-                        runOnUiThread(new Runnable() {
+                    FaceDetector.Face[] faces = new FaceDetector.Face[2];
+                    FaceDetector detector = new FaceDetector(bitmap.getWidth(), bitmap.getHeight(), faces.length);
+                    int numFace = detector.findFaces(bitmap, faces);
+                    Log.e(TAG, "number of face : " + numFace);
+                    if (numFace > 0) {
+                        new Thread(new Runnable() {
 
                             public void run() {
+
+                                runOnUiThread(new Runnable() {
+
+                                    public void run() {
+                                    }
+                                });
+                                HttpClient httpClient = new HttpClient();
+                                httpClient.HttpFileUpload("" + mImageCaptureUri.getPath());
                             }
-                        });
-
-                        HttpClient httpClient = new HttpClient();
-                        httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
-
+                        }).start();
+                        Intent CameraIntent = new Intent(CameraActivity.this, TMapActivity.class);
+                        CameraIntent.putExtra("filename", url);
+                        CameraIntent.putExtra("primarykey", primaryKey);
+                        CameraIntent.putExtra("password", password);
+                        CameraIntent.putExtra("phonenumber", phonenumber);
+                        CameraIntent.putExtra("myphonenum", myphonenum);
+                        CameraIntent.putExtra("name", name);
+                        startActivity(CameraIntent);
+                        //camButton();
                     }
-                }).start();
-
-
-                Intent CameraIntent = new Intent(CameraActivity.this, TMapActivity.class);
-                CameraIntent.putExtra("primarykey",primaryKey);
-                CameraIntent.putExtra("password",password);
-                CameraIntent.putExtra("phonenumber",phonenumber);
-                startActivity(CameraIntent);
-
-
-
-                //
-                //camButton();
-            }
-            else
-                setup();
+                    else {
+                        Toast.makeText(CameraActivity.this, "얼굴 인식 실패", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        //url ="tmp_"+String.valueOf(System.currentTimeMillis())+".png";
+                        mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),url));
+                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,mImageCaptureUri);
+                        startActivityForResult(intent,PICK_FROM_CAMERA);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(CameraActivity.this, "다시 부탁드립니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    //url ="tmp_"+String.valueOf(System.currentTimeMillis())+".png";
+                    mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),url));
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,mImageCaptureUri);
+                    startActivityForResult(intent,PICK_FROM_CAMERA);
+                }
         }
-
         if(requestCode!=RESULT_OK)
             return;
 

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "486100709292",
+    "firebase_url": "https://ansehen-13443.firebaseio.com",
+    "project_id": "ansehen-13443",
+    "storage_bucket": "ansehen-13443.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486100709292:android:7400053b072deca3",
+        "android_client_info": {
+          "package_name": "org.techtown.ansehen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486100709292-kn2e2q7n20s3q7uma6jbqedu7cdt251v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLUThfWpArimdiqvwGU8HHF_WtsmXeJAU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

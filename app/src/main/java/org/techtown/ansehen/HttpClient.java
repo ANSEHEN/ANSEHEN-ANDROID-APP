@@ -56,8 +56,6 @@ public class HttpClient {
             PrintWriter wr = new PrintWriter(osw);
             wr.write(buffer.toString());
             wr.flush();
-
-            Log.i("aaaaaaaa","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             String serverResponseMessage = conn.getResponseMessage();
             Log.i("uploadFile", "HTTP Response is : "
                     + serverResponseMessage + ": " + serverResponseCode);

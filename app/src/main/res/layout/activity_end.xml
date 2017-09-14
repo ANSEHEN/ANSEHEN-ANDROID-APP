@@ -8,32 +8,42 @@
     tools:context="org.techtown.ansehen.RegisterActivity">
 
     <TextView
-        android:drawableTop="@drawable/ic_android_black_24dp"
-        android:text="\n이용해주셔서\n감사합니다"
+        android:drawableBottom="@drawable/ic_android_black_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:padding="5dp"
-        android:textSize="30dp"
-        android:gravity="center"
-        android:textStyle="bold"
         android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="이용해주셔서\n감사합니다"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="82dp"
-        app:layout_constraintHorizontal_bias="0.502" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.163"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintLeft_creator="1" />
 
     <Button
         android:id="@+id/exitButton"
-        android:layout_width="341dp"
+        android:layout_width="0dp"
         android:layout_height="54dp"
         android:background="@color/colorPrimaryDark"
         android:text="프로그램 종료"
         android:textColor="#ffffffff"
         android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="342dp"
-        app:layout_constraintHorizontal_bias="0.511" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.853"
+        tools:layout_constraintRight_creator="1"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="21dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginLeft="21dp"
+        android:layout_marginRight="21dp" />
 
 </android.support.constraint.ConstraintLayout>

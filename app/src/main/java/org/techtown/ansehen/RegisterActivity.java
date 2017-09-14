@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import static android.content.ContentValues.TAG;
 
@@ -59,44 +60,22 @@ public class RegisterActivity extends AppCompatActivity {
                 loginPw = pwText.getText().toString().trim();
                 loginPhone = phoneText.getText().toString().trim();
                 filename=getPhoneNumber()+"__"+primaryKey+".jpg";
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-
-                        runOnUiThread(new Runnable() {
-
-                            public void run() {
-                                //messageText.setText("uploading started.....");
-                            }
-                        });
-                        EditText nameText = (EditText)findViewById(R.id.nameText);
-                        EditText pwText = (EditText)findViewById(R.id.pwText);
-                        EditText phoneText = (EditText)findViewById(R.id.phoneText);
-
-                        String name = nameText.getText().toString();
-                        String password = pwText.getText().toString();
-                        String inputPhone = phoneText.getText().toString();
-
-
-                        String phoneNum = getPhoneNumber();
-
-                        Log.e(TAG,"name : "+name);
-                        Log.e(TAG,"passWord : "+password);
-                        Log.e(TAG,"inputPhone : "+inputPhone);
-                        Log.e(TAG,"phoneNum : "+phoneNum);
-                        Log.e(TAG,"primaryKey : "+primaryKey);
-
-                        HttpClient http = new HttpClient();
-                        http.putUserInfo(name,password,phoneNum,inputPhone,filename,primaryKey);
-                    }
-                }).start();
-
+                if(loginName.equals("")||loginName.equals("")||loginPw.equals("")) {
+                    Toast.makeText(RegisterActivity.this, "입력 미완료", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(loginPhone.equals(getPhoneNumber())) {
+                    String message="본인 핸드폰 번호가 아닌\n";
+                    Toast.makeText(RegisterActivity.this, message + "연락받을 사람의 번호를 입력해주세요", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent registerIntent = new Intent(RegisterActivity.this, CameraActivity.class);
                 registerIntent.putExtra("RegisterActivity_phoneNum",filename);
                 registerIntent.putExtra("primaryKey",primaryKey);
                 registerIntent.putExtra("password",loginPw);
                 registerIntent.putExtra("phonenumber",loginPhone);
+                registerIntent.putExtra("myphonenum",phoneNum);
+                registerIntent.putExtra("name",loginName);
                 RegisterActivity.this.startActivity(registerIntent);
 
                 Log.e(TAG,"phoneNum : "+filename);

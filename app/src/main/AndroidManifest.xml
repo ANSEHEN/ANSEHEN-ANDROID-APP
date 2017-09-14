@@ -16,6 +16,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_OWNER_DATA" />
     <uses-permission android:name="android.permission.READ_OWNER_DATA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
@@ -34,8 +37,7 @@
         <activity android:name=".TMapActivity"></activity>
         <activity android:name=".Pop"
             android:theme="@android:style/Theme.Dialog"></activity>
-        <activity android:name=".endActivity"
-            android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".endActivity"></activity>
     </application>
 
 </manifest>

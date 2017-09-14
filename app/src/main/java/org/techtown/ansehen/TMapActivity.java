@@ -2,6 +2,7 @@ package org.techtown.ansehen;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,10 +15,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -51,14 +54,20 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
+
 import org.techtown.ansehen.CCTVBeaconManager;
 
 import static android.content.ContentValues.TAG;
@@ -90,7 +99,55 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
     String result_p="NULL";
 
+    String t_name;
+    String t_phnoenum;
+    String filename;
     CCTVBeaconManager CBM = new CCTVBeaconManager();
+    public void changeState(String s_temp){
+        Log.i("transport","-----------------------------------------------------------------");
+        final String urlPath_register = "http://13.124.164.203/ChangeState.php";
+        URL connectUrl =null;
+
+        FileInputStream fileInputStream =null;
+        int serverResponseCode = 0;
+        try
+        {
+            connectUrl=new URL(urlPath_register);
+            HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("state").append("=").append(s_temp).append("&");
+            //buffer.append("result").append("=").append(inputPhone).append("&");
+            //buffer.append("userName").append("=").append(name).append("&");
+            //buffer.append("userPw").append("=").append(pw).append("&");
+            //buffer.append("fileName").append("=").append(filename).append("&");
+            buffer.append("uniqueKey").append("=").append(primaryKey);
+            Log.i("beaconTemp,stateTemp",s_temp+","+primaryKey);
+
+            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+            PrintWriter wr = new PrintWriter(osw);
+            wr.write(buffer.toString());
+            wr.flush();
+
+            String serverResponseMessage = conn.getResponseMessage();
+            Log.i("BeaconId", "HTTP Response is : "
+                    + serverResponseMessage + ": " + serverResponseCode);
+
+            fileInputStream.close();
+        } catch (MalformedURLException ex) {
+            Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
+        } catch (Exception e) {
+            Log.d("Test", "exception " + e.getMessage());
+        }
+        Log.i("transport end","-----------------------------------------------------------------");
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -99,6 +156,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 temp_s=data.getStringExtra("return");
                 if(temp_s.equals("OK")) {
                     Log.i("test_s","-----------------");
+                    this.changeState("state");
                     mhandler.sendEmptyMessage(0);
                 }
             }
@@ -112,6 +170,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         primaryKey=intent.getExtras().getString("primarykey");
         password=intent.getExtras().getString("password");
         phonenumber=intent.getExtras().getString("phonenumber");
+        t_phnoenum=intent.getExtras().getString("myphonenum");
+        t_name=intent.getExtras().getString("name");
+        filename=intent.getExtras().getString("filename");
         Log.i("In TMap: phonenum",""+phonenumber);
         Log.e(TAG,"TMAP primaryKey : "+primaryKey);
         //Intent Cameraintent=new Intent(this.getIntent());
@@ -267,6 +328,21 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     Log.i("******End",""+end.toString());
                     handler.sendEmptyMessage(0);
                     mhandler.sendEmptyMessage(0);
+                    Log.i("test1111",t_name+","+password+","+t_phnoenum+","+phonenumber+","+filename+","+primaryKey);
+                    new Thread(new Runnable() {
+
+                        public void run() {
+
+                            runOnUiThread(new Runnable() {
+
+                                public void run() {
+                                    //messageText.setText("uploading started.....");
+                                }
+                            });
+                            HttpClient http = new HttpClient();
+                            http.putUserInfo(t_name,password,t_phnoenum,phonenumber,filename,primaryKey);
+                        }
+                    }).start();
                     //start = end = null;
                 } else {
                     Toast.makeText(TMapActivity.this, "start or end is null", Toast.LENGTH_SHORT).show();
@@ -596,21 +672,23 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 gps = new GpsInfo(TMapActivity.this);
                 // GPS 사용유무 가져오기
                 if (gps.isGetLocation()) {
-                    double latitude = gps.getLatitude();
-                    double longitude = gps.getLongitude();
+                    double latitude = (gps.getLatitude()*100000d)/100000d;
+                    double longitude = (gps.getLongitude()*100000d)/100000d;
                     Log.i("lat,lon",latitude+","+longitude);
-                    Log.i("lat,lon",end.getLatitude()+","+end.getLongitude());
-                    double t_lat=Math.abs(latitude-end.getLatitude());
-                    double t_lon=Math.abs(longitude-end.getLongitude());
-                    if((t_lat+t_lon)<0.00025) {
+                    Log.i("e_lat,e_lon",end.getLatitude()+","+end.getLongitude());
+                    double t_lat=Math.abs((latitude-end.getLatitude())*100000d)/100000d;
+                    double t_lon=Math.abs((longitude-end.getLongitude())*100000d)/100000d;
+                    Log.i("Distence from end_p",""+(t_lat+t_lon));
+                    if((t_lat+t_lon)<0.00030) {
                         //목적지 도착
                         mhandler.removeMessages(0);
                         handler.removeMessages(0);
-                        Intent endIntent = new Intent(TMapActivity.this, Pop.class);
+                        Intent endIntent = new Intent(TMapActivity.this, endActivity.class);
+                        Log.i("TMAP_primaryKey",""+primaryKey);
+                        endIntent.putExtra("primaryKey", primaryKey);
                         TMapActivity.this.startActivity(endIntent);
                     }
-                    Toast.makeText(
-                            getApplicationContext(),"당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,Toast.LENGTH_LONG).show();
                 }else {
                     // GPS 를 사용할수 없으므로
                     gps.showSettingsAlert();
@@ -628,6 +706,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 //tmapIntent.putExtra("handler", (Parcelable) mhandler);
                 TMapActivity.this.startActivityForResult(tmapIntent,1111);
                 mhandler.removeMessages(0);
+                //웹서버 상태 0으로 변경
             }
             Log.i("반환된 result값",""+result_p);
         }
@@ -643,8 +722,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
                 URL url = new URL(serverURL);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-
                 httpURLConnection.setReadTimeout(5000);
                 httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
