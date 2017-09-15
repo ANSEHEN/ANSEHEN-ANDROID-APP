@@ -39,10 +39,10 @@ public class CCTVBeaconManager{
         num=0;
     }
     public void beaconTimeCheck(){
-        while(true) {
             int i;
             for (i = 0; i < num; i++) {
                 if ( tm[i].TimeEnd() > 15 ) {
+                    Log.i("beacon Disconnect","-------------------");
                     this.beaconDisconnect(Array_CctvId[i]);
                     //tm[i] 공간 소멸하고 배열 정리하기
                     tm[i]=null;
@@ -60,8 +60,6 @@ public class CCTVBeaconManager{
                     //Array_Cctvld[i] 공간 소멸하고 배열 정리하기
                 }
             }
-            SystemClock.sleep(1000);
-        }
     }
     public void beaconDisconnect(String beaconTemp){
         Log.i("distconnect_s","-----------------------------------------------------------------");
@@ -162,6 +160,7 @@ public class CCTVBeaconManager{
     }
     public int compareCctvId(String temp){
         int i;
+        beaconTimeCheck();
         for(i=0;i<num;i++){
             if(temp.equals(Array_CctvId[i])){
                 Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

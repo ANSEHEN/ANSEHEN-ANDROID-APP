@@ -183,7 +183,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         //
         Log.i("Point 1.","----------------------------------------------------------#########################");
 
-        CBM.beaconTimeCheck();
+        //CBM.beaconTimeCheck();
         Log.i("primaryKey",primaryKey);
         CBM.AddPrimaryKey(primaryKey);
         Log.i("Point 2.","----------------------------------------------------------#########################");
