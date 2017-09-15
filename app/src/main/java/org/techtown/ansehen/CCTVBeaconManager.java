@@ -22,7 +22,7 @@ class TimeManagement{
             int time;
             end=System.currentTimeMillis();
             time=((int)(end-start)/1000);
-            Log.i("Timer time:",""+time+"초");
+            //Log.i("Timer time:",""+time+"초");
             return time;
         }
         return 0;
@@ -39,27 +39,28 @@ public class CCTVBeaconManager{
         num=0;
     }
     public void beaconTimeCheck(){
+        while(true) {
             int i;
             for (i = 0; i < num; i++) {
-                if ( tm[i].TimeEnd() > 15 ) {
-                    Log.i("beacon Disconnect","-------------------");
+                if (tm[i].TimeEnd() > 15) {
+                    Log.i("beacon Disconnect", "-------------------");
                     this.beaconDisconnect(Array_CctvId[i]);
                     //tm[i] 공간 소멸하고 배열 정리하기
-                    tm[i]=null;
-                    Array_CctvId[i]=null;
-                    if(i != (num-1)){
-                        for(int j=i;j<(num-1);j++)
-                        {
-                            tm[j]=tm[j+1];
-                            Array_CctvId[j]=Array_CctvId[j+1];
+                    tm[i] = null;
+                    Array_CctvId[i] = null;
+                    if (i != (num - 1)) {
+                        for (int j = i; j < (num - 1); j++) {
+                            tm[j] = tm[j + 1];
+                            Array_CctvId[j] = Array_CctvId[j + 1];
                         }
                     }
-                    tm[num-1]=null;
-                    Array_CctvId[num-1]=null;
+                    tm[num - 1] = null;
+                    Array_CctvId[num - 1] = null;
                     num--;
                     //Array_Cctvld[i] 공간 소멸하고 배열 정리하기
                 }
             }
+        }
     }
     public void beaconDisconnect(String beaconTemp){
         Log.i("distconnect_s","-----------------------------------------------------------------");
@@ -160,12 +161,10 @@ public class CCTVBeaconManager{
     }
     public int compareCctvId(String temp){
         int i;
-        beaconTimeCheck();
         for(i=0;i<num;i++){
             if(temp.equals(Array_CctvId[i])){
                 Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 tm[i].TimeStart();
-                //timeCount[i]=0;
                 return 0;
             }
         }

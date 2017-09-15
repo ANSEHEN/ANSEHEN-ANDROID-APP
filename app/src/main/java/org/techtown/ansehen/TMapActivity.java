@@ -101,7 +101,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     String filename;
     CCTVBeaconManager CBM = new CCTVBeaconManager();
     public void changeState(String s_temp){
-        Log.i("transport","-----------------------------------------------------------------");
+        Log.i("PPPPPP","------------------------------------------------------");
         final String urlPath_register = "http://13.124.164.203/ChangeState.php";
         URL connectUrl =null;
 
@@ -142,7 +142,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         } catch (Exception e) {
             Log.d("Test", "exception " + e.getMessage());
         }
-        Log.i("transport end","-----------------------------------------------------------------");
     }
 
     @Override
@@ -153,7 +152,18 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 temp_s=data.getStringExtra("return");
                 if(temp_s.equals("OK")) {
                     Log.i("test_s","-----------------");
-                    this.changeState("state");
+                    new Thread(new Runnable() {
+
+                        public void run() {
+
+                            runOnUiThread(new Runnable() {
+
+                                public void run() {
+                                }
+                            });
+                            changeState("state");
+                        }
+                    }).start();
                     mhandler.sendEmptyMessage(0);
                 }
             }
@@ -163,12 +173,13 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
-
+        /*
         Log.i("service S","------------");
         Intent intent2 = new Intent(
                 getApplicationContext(),//현재제어권자
                 MainService.class); // 이동할 컴포넌트
         startService(intent2);
+        */
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primarykey");
         password=intent.getExtras().getString("password");
@@ -182,8 +193,19 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         //
         Log.i("Point 1.","----------------------------------------------------------#########################");
+        new Thread(new Runnable() {
 
-        //CBM.beaconTimeCheck();
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+
+                    public void run() {
+                    }
+                });
+                CBM.beaconTimeCheck();
+            }
+        }).start();
+
         Log.i("primaryKey",primaryKey);
         CBM.AddPrimaryKey(primaryKey);
         Log.i("Point 2.","----------------------------------------------------------#########################");
@@ -605,7 +627,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 temp=(""+beacon.getId2());
                 Log.i("in for temp:",temp);
                 x=CBM.compareCctvId(temp);
-
                 final String tempp=temp;
                 if(x==1){
                     new Thread(new Runnable() {
@@ -670,10 +691,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     double t_lon=Math.abs((longitude-end.getLongitude())*100000d)/100000d;
                     Log.i("Distence from end_p",""+(t_lat+t_lon));
                     if((t_lat+t_lon)<0.00030) {
+                        /*
                         Intent intent3 = new Intent(
                                 getApplicationContext(),//현재제어권자
                                 MainService.class); // 이동할 컴포넌트
                         stopService(intent3);
+                        */
                         //목적지 도착
                         mhandler.removeMessages(0);
                         handler.removeMessages(0);
@@ -708,7 +731,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         @Override
         protected String doInBackground(String... params) {
-            Log.i("transport","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             String serverURL = params[0];
             String uniqueKey = primaryKey;
             String postParameters = "unique_key=" + uniqueKey;
