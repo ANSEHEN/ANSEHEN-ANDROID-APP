@@ -66,9 +66,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
-
-import org.techtown.ansehen.CCTVBeaconManager;
 
 import static android.content.ContentValues.TAG;
 
@@ -166,6 +163,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
+
+        Log.i("service S","------------");
+        Intent intent2 = new Intent(
+                getApplicationContext(),//현재제어권자
+                MainService.class); // 이동할 컴포넌트
+        startService(intent2);
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primarykey");
         password=intent.getExtras().getString("password");
@@ -179,21 +182,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         //
         Log.i("Point 1.","----------------------------------------------------------#########################");
-        new Thread(new Runnable() {
 
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-
-                    public void run() {
-                        //CBM.beaconTimeCheck();
-                    }
-
-                });
-                CBM.beaconTimeCheck();
-            }
-        }).start();
-        //CBM.beaconTimeCheck();
+        CBM.beaconTimeCheck();
         Log.i("primaryKey",primaryKey);
         CBM.AddPrimaryKey(primaryKey);
         Log.i("Point 2.","----------------------------------------------------------#########################");
@@ -680,6 +670,10 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     double t_lon=Math.abs((longitude-end.getLongitude())*100000d)/100000d;
                     Log.i("Distence from end_p",""+(t_lat+t_lon));
                     if((t_lat+t_lon)<0.00030) {
+                        Intent intent3 = new Intent(
+                                getApplicationContext(),//현재제어권자
+                                MainService.class); // 이동할 컴포넌트
+                        stopService(intent3);
                         //목적지 도착
                         mhandler.removeMessages(0);
                         handler.removeMessages(0);

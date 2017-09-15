@@ -22,7 +22,7 @@ class TimeManagement{
             int time;
             end=System.currentTimeMillis();
             time=((int)(end-start)/1000);
-            //Log.i("Timer time:",""+time+"초");
+            Log.i("Timer time:",""+time+"초");
             return time;
         }
         return 0;
@@ -64,7 +64,7 @@ public class CCTVBeaconManager{
         }
     }
     public void beaconDisconnect(String beaconTemp){
-        Log.i("transport","-----------------------------------------------------------------");
+        Log.i("distconnect_s","-----------------------------------------------------------------");
         final String urlPath_register = "http://13.124.164.203/BeaconDisconnect.php";
         URL connectUrl =null;
 
@@ -105,7 +105,7 @@ public class CCTVBeaconManager{
         } catch (Exception e) {
             Log.d("Test", "exception " + e.getMessage());
         }
-        Log.i("transport end","-----------------------------------------------------------------");
+        Log.i("beaconDisconnect_e","-----------------------------------------------------------------");
     }
     public void transportCctv(String beaconTemp){
         Log.i("transport","-----------------------------------------------------------------");
@@ -164,7 +164,7 @@ public class CCTVBeaconManager{
         int i;
         for(i=0;i<num;i++){
             if(temp.equals(Array_CctvId[i])){
-                //Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                Log.i("Equal Beacon","!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 tm[i].TimeStart();
                 //timeCount[i]=0;
                 return 0;

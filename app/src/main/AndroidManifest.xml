@@ -38,6 +38,7 @@
         <activity android:name=".Pop"
             android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name=".endActivity"></activity>
-    </application>
 
+        <service android:name=".MainService"></service>
+    </application>
 </manifest>
