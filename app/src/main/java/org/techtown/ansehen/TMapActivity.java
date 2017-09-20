@@ -541,6 +541,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         Log.i("Destroy","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         Thread t_thread = new Thread(){
             public void run(){
+                changeState("exit");
                 Log.i("test",primaryKey);
                 dataClear(primaryKey);
                 changeState("result");

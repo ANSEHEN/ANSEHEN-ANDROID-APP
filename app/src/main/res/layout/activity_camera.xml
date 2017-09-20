@@ -24,7 +24,7 @@
         android:layout_height="653dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/ic_launcher_picture"
         tools:layout_editor_absoluteY="-7dp"
         tools:layout_editor_absoluteX="31dp" />
     <Button
