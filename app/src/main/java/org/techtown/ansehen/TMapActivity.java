@@ -47,6 +47,8 @@ import com.skp.Tmap.TMapView;
 import com.skp.Tmap.TMapGpsManager;
 
 
+import junit.framework.Test;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -58,6 +60,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -71,6 +74,7 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
+    public static Context mContext;
     private GpsInfo gps;
 
     String temp_s="NO";
@@ -169,7 +173,10 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
+        mContext=this;
         ghandler.sendEmptyMessage(0);
+
+        startService(new Intent(this, TestService.class));
 
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primarykey");
@@ -469,6 +476,42 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         }
     };
+    public void dataClear(String temp_key){
+        Log.i("end_t start","-----------------------------------------------------------------");
+        final String urlPath_register = "http://13.124.164.203/server_clear.php";
+        URL connectUrl =null;
+        FileInputStream fileInputStream =null;
+        int serverResponseCode = 0;
+        try
+        {
+            connectUrl=new URL(urlPath_register);
+            HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("uniqueKey").append("=").append(temp_key);
+
+            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+            PrintWriter wr = new PrintWriter(osw);
+            wr.write(buffer.toString());
+            wr.flush();
+            String serverResponseMessage = conn.getResponseMessage();
+            Log.i("uploadFile", "HTTP Response is : "
+                    + serverResponseMessage + ": " + serverResponseCode);
+
+            fileInputStream.close();
+        } catch (MalformedURLException ex) {
+            Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
+        } catch (Exception e) {
+            Log.d("Test", "exception " + e.getMessage());
+        }
+        Log.i("end_t end","-----------------------------------------------------------------");
+    }
 
     //
     @Override
@@ -483,8 +526,33 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         ghandler.removeMessages(0);
         mhandler.removeMessages(0);
         handler.removeMessages(0);
+        new Thread(new Runnable() {
+
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+
+                    public void run() {
+                    }
+                });
+
+            }
+        }).start();
         Log.i("Destroy","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        ((endActivity)endActivity.mContext).dataClear(primaryKey);
+        Thread t_thread = new Thread(){
+            public void run(){
+                Log.i("test",primaryKey);
+                dataClear(primaryKey);
+                changeState("result");
+            }
+        };
+        t_thread.start();
+        try{
+            t_thread.join();
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
