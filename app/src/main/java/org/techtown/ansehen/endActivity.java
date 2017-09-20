@@ -1,6 +1,7 @@
 package org.techtown.ansehen;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,7 @@ import java.net.URL;
  */
 
 public class endActivity extends AppCompatActivity {
+    public static Context mContext;
     private String primaryKey;
     public void changeState(String s_temp){
         Log.i("transport","-----------------------------------------------------------------");
@@ -42,10 +44,6 @@ public class endActivity extends AppCompatActivity {
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("state").append("=").append(s_temp).append("&");
-            //buffer.append("result").append("=").append(inputPhone).append("&");
-            //buffer.append("userName").append("=").append(name).append("&");
-            //buffer.append("userPw").append("=").append(pw).append("&");
-            //buffer.append("fileName").append("=").append(filename).append("&");
             buffer.append("uniqueKey").append("=").append(primaryKey);
             Log.i("beaconTemp,stateTemp",s_temp+","+primaryKey);
 
@@ -106,7 +104,7 @@ public class endActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end);
-
+        mContext=this;
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primaryKey");
         Log.i("end P1",""+primaryKey);

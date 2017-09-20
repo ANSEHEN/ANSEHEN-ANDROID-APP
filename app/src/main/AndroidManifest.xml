@@ -33,12 +33,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".CameraActivity"
+            android:theme="@android:style/Theme.NoTitleBar"></activity>
         <activity android:name=".TMapActivity"></activity>
         <activity android:name=".Pop"
             android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name=".endActivity"></activity>
 
-        <service android:name=".MainService"></service>
     </application>
 </manifest>

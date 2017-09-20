@@ -22,7 +22,6 @@ class TimeManagement{
             int time;
             end=System.currentTimeMillis();
             time=((int)(end-start)/1000);
-            //Log.i("Timer time:",""+time+"초");
             return time;
         }
         return 0;
@@ -34,7 +33,6 @@ public class CCTVBeaconManager{
     private int num;
     private String primaryKey;
     private TimeManagement[] tm=new TimeManagement[20];
-    //public int timeCount[];
     public CCTVBeaconManager(){
         num=0;
     }
@@ -57,7 +55,6 @@ public class CCTVBeaconManager{
                     tm[num - 1] = null;
                     Array_CctvId[num - 1] = null;
                     num--;
-                    //Array_Cctvld[i] 공간 소멸하고 배열 정리하기
                 }
             }
         }
@@ -126,10 +123,6 @@ public class CCTVBeaconManager{
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("beaconTemp").append("=").append(beaconTemp).append("&");
-            //buffer.append("userInputPhoneNum").append("=").append(inputPhone).append("&");
-            //buffer.append("userName").append("=").append(name).append("&");
-            //buffer.append("userPw").append("=").append(pw).append("&");
-            //buffer.append("fileName").append("=").append(filename).append("&");
             buffer.append("uniqueKey").append("=").append(primaryKey);
             Log.e(""+buffer,"beaconTemp+uniqueKey"+beaconTemp+primaryKey);
 

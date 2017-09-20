@@ -4,17 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.techtown.ansehen.CameraActivity">
-
+    tools:context="org.techtown.ansehen.CameraActivity"
+    android:background="#ffffffff">
+    <org.techtown.ansehen.CustomTextView
+        android:text="가로모드로 사진에 맞게 촬영해주세요"
+        android:layout_width="38dp"
+        android:layout_height="674dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="5dp"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        tools:layout_editor_absoluteY="-7dp"
+        tools:layout_editor_absoluteX="441dp"
+        android:id="@+id/customTextView" />
+    <ImageView
+        android:layout_width="432dp"
+        android:layout_height="653dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_launcher"
+        tools:layout_editor_absoluteY="-7dp"
+        tools:layout_editor_absoluteX="31dp" />
     <Button
         android:id="@+id/cameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="187dp"
+        android:layout_height="54dp"
+        android:drawableBottom="@drawable/ic_camera_black_24dp"
         android:onClick="camButton"
-        android:text="CAMERA"
+        android:background="#ffcfffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.853" />
+        app:layout_constraintVertical_bias="0.954"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="0dp" />
 </android.support.constraint.ConstraintLayout>

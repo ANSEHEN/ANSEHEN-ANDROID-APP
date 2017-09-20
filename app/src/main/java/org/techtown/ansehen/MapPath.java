@@ -64,9 +64,6 @@ public class MapPath {
             StringBuffer buffer = new StringBuffer();
             buffer.append("uniqueKey").append("=").append(primaryKey).append("&");
             buffer.append("endPoint").append("=").append(end_p).append("&");
-            //buffer.append("sizeNum").append("=").append(size_num).append("&");
-            //buffer.append("userPw").append("=").append(pw).append("&");
-            //buffer.append("fileName").append("=").append(filename).append("&");
             buffer.append("allPath").append("=").append(allPath);
             Log.i("transport","~ing-------------------------------");
             Log.i("test: ",""+buffer);

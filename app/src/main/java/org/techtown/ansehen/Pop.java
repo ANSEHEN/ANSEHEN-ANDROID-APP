@@ -35,7 +35,6 @@ import static android.app.PendingIntent.*;
  * Created by bit on 2017-09-06.
  */
 public class Pop extends Activity {
-    //Handler test_temp;
     EditText popPassword;
     TextView timeText;
     String passwordTemp;
@@ -119,7 +118,6 @@ public class Pop extends Activity {
                         runOnUiThread(new Runnable() {
 
                             public void run() {
-                                //messageText.setText("uploading started.....");
                             }
                         });
                     }

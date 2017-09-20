@@ -22,6 +22,7 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -101,7 +102,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     String filename;
     CCTVBeaconManager CBM = new CCTVBeaconManager();
     public void changeState(String s_temp){
-        Log.i("PPPPPP","------------------------------------------------------");
         final String urlPath_register = "http://13.124.164.203/ChangeState.php";
         URL connectUrl =null;
 
@@ -120,10 +120,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("state").append("=").append(s_temp).append("&");
-            //buffer.append("result").append("=").append(inputPhone).append("&");
-            //buffer.append("userName").append("=").append(name).append("&");
-            //buffer.append("userPw").append("=").append(pw).append("&");
-            //buffer.append("fileName").append("=").append(filename).append("&");
             buffer.append("uniqueKey").append("=").append(primaryKey);
             Log.i("beaconTemp,stateTemp",s_temp+","+primaryKey);
 
@@ -143,7 +139,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             Log.d("Test", "exception " + e.getMessage());
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -164,6 +159,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                             changeState("state");
                         }
                     }).start();
+                    SystemClock.sleep(1000);
                     mhandler.sendEmptyMessage(0);
                 }
             }
@@ -173,13 +169,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmap);
-        /*
-        Log.i("service S","------------");
-        Intent intent2 = new Intent(
-                getApplicationContext(),//현재제어권자
-                MainService.class); // 이동할 컴포넌트
-        startService(intent2);
-        */
+        ghandler.sendEmptyMessage(0);
+
         Intent intent = new Intent(this.getIntent());
         primaryKey=intent.getExtras().getString("primarykey");
         password=intent.getExtras().getString("password");
@@ -189,10 +180,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         filename=intent.getExtras().getString("filename");
         Log.i("In TMap: phonenum",""+phonenumber);
         Log.e(TAG,"TMAP primaryKey : "+primaryKey);
-        //Intent Cameraintent=new Intent(this.getIntent());
-
-        //
-        Log.i("Point 1.","----------------------------------------------------------#########################");
         new Thread(new Runnable() {
 
             public void run() {
@@ -208,60 +195,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
         Log.i("primaryKey",primaryKey);
         CBM.AddPrimaryKey(primaryKey);
-        Log.i("Point 2.","----------------------------------------------------------#########################");
         // 실제로 비콘을 탐지하기 위한 비콘매니저 객체를 초기화
         beaconManager = BeaconManager.getInstanceForApplication(this);
-        //textView = (TextView)findViewById(R.id.Textview);
-
-        // 여기가 중요한데, 기기에 따라서 setBeaconLayout 안의 내용을 바꿔줘야 하는듯 싶다.
-        // 필자의 경우에는 아래처럼 하니 잘 동작했음.
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
 
         // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
         beaconManager.bind(this);
-
-
-        /*
-        new Thread(new Runnable() {
-
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-
-                    public void run() {
-                        Log.i("Test","---------------------------------------");
-
-                        new Thread(new Runnable() {
-
-                            public void run() {
-
-                                runOnUiThread(new Runnable() {
-
-                                    public void run() {
-                                        BeaconThread beaconThread = new BeaconThread();
-                                        //beaconThread.testBeacon();
-                                    }
-                                });
-
-                                //HttpClient httpClient = new HttpClient();
-                                //httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
-
-                            }
-                        }).start();
-                        Log.i("Test end","-----------------------------------");
-                    }
-                });
-
-                //HttpClient httpClient = new HttpClient();
-                //httpClient.HttpFileUpload(""+mImageCaptureUri.getPath());
-
-            }
-        }).start();
-
-        Intent beaconIntent = new Intent(CameraActivity.this, BeaconThread.class);
-        startActivity(beaconIntent);
-        */
-
         typeView = (RadioGroup) findViewById(R.id.group_type);
         keywordView = (EditText) findViewById(R.id.edit_keyword);
         listView = (ListView) findViewById(R.id.listView);
@@ -289,32 +228,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         mapView.setSKPMapApiKey("0964bcd8-f1f6-325c-9903-0210ac72ef61");
         mapView.setLanguage(TMapView.LANGUAGE_KOREAN);
 
-        Button btn = (Button) findViewById(R.id.btn_add_marker);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               /* 현재 보는 방향 */
-                mapView.setCompassMode(true);
-                /* 현위치 아이콘표시 */
-                mapView.setIconVisibility(true);
-                /* 줌레벨 */
-                mapView.setZoomLevel(15);
-                mapView.setMapType(TMapView.MAPTYPE_STANDARD);
-                mapView.setLanguage(TMapView.LANGUAGE_KOREAN);
-
-                tmapgps = new TMapGpsManager(TMapActivity.this);
-                tmapgps.setMinTime(1000);
-                tmapgps.setMinDistance(5);
-                tmapgps.setProvider(tmapgps.NETWORK_PROVIDER);//연결된 인터넷으로 현 위치를 받습니다.
-                tmapgps.OpenGps();
-                mapView.setTrackingMode(true);
-                mapView.setSightVisible(true);
-
-                //                  TMapPoint point = mapView.getCenterPoint();
-                //          addMarker(point.getLatitude(), point.getLongitude(), "My Marker");
-            }
-        });
-        btn = (Button) findViewById(R.id.btn_search);
+        Button btn = (Button) findViewById(R.id.btn_search);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -355,7 +269,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                             http.putUserInfo(t_name,password,t_phnoenum,phonenumber,filename,primaryKey);
                         }
                     }).start();
-                    //start = end = null;
                 } else {
                     Toast.makeText(TMapActivity.this, "start or end is null", Toast.LENGTH_SHORT).show();
                 }
@@ -472,10 +385,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     private void setupMap() {
         isInitialized = true;
         mapView.setMapType(TMapView.MAPTYPE_STANDARD);
-        //        mapView.setSightVisible(true);
-        //        mapView.setCompassMode(true);
-        //        mapView.setTrafficInfo(true);
-        //        mapView.setTrackingMode(true);
         if (cacheLocation != null) {
             moveMap(cacheLocation.getLatitude(), cacheLocation.getLongitude());
             setMyLocation(cacheLocation.getLatitude(), cacheLocation.getLongitude());
@@ -571,6 +480,11 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     protected void onDestroy() {
         super.onDestroy();
         beaconManager.unbind(this);
+        ghandler.removeMessages(0);
+        mhandler.removeMessages(0);
+        handler.removeMessages(0);
+        Log.i("Destroy","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        ((endActivity)endActivity.mContext).dataClear(primaryKey);
     }
 
     @Override
@@ -603,11 +517,32 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         handler.sendEmptyMessage(0);
     }
     */
+    Handler ghandler = new Handler(){
+        public void handleMessage(Message msg){
+            /* 현재 보는 방향 */
+            //mapView.setCompassMode(true);
+            /* 현위치 아이콘표시 */
+            mapView.setIconVisibility(true);
+            /* 줌레벨 */
+            //mapView.setZoomLevel(15);
+            mapView.setMapType(TMapView.MAPTYPE_STANDARD);
+            mapView.setLanguage(TMapView.LANGUAGE_KOREAN);
+
+            tmapgps = new TMapGpsManager(TMapActivity.this);
+            tmapgps.setMinTime(1000);
+            tmapgps.setMinDistance(5);
+            tmapgps.setProvider(tmapgps.NETWORK_PROVIDER);//연결된 인터넷으로 현 위치를 받습니다.
+            tmapgps.OpenGps();
+            //mapView.setTrackingMode(true);
+            mapView.setSightVisible(true);
+            ghandler.sendEmptyMessageDelayed(0, 5000);
+        }
+    };
     Handler mhandler = new Handler() {
         public void handleMessage(Message msg) {
+
             GetData task = new GetData();
             task.execute("http://13.124.164.203/android_test.php");
-            //startActivity(new Intent(TMapActivity.this, Pop.class));
             mhandler.sendEmptyMessageDelayed(0, 10000);
         }
     };
@@ -615,12 +550,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         public void handleMessage(Message msg) {
             dataString="";
             String temp="";
-            //textView.setText("");
-            //Log.i("Handler Start","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             // 비콘의 아이디와 거리를 측정하여 textView에 넣는다.
             for(Beacon beacon : beaconList){
                 int x=0;
-                //Log.i("beaconList","--------------------------------------------------------------------");
                 dataString.concat("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
                 Log.i("data: ",beacon.getId2()+"/"+"Distance: "+ Double.parseDouble(String.format("%.3f", beacon.getDistance())));
 
@@ -643,10 +575,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                         }
                     }).start();
                 }
-                //textView.append("ID : " + beacon.getId2() + " / " + "Distance : " + Double.parseDouble(String.format("%.3f", beacon.getDistance())) + "m\n");
             }
-            //Log.i("Handler End","@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            // 자기 자신을 1초마다 호출
             handler.sendEmptyMessageDelayed(0, 5000);
         }
     };
@@ -666,9 +595,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //지워도 됨
-            SystemClock.sleep(1000);
-            //
             progressDialog.dismiss();
             Log.d(TAG, "response  - " + result);
             //String temp=result.substring(indexOf,1);
@@ -678,7 +604,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
             //result 반환값 설정 0(진행중) 1(진행완료) 2(CCTV 얼굴 미확인,팝업발생)
             if(result_p.equals("0")) {
-                //startActivity(new Intent(TMapActivity.this, Pop.class));
                 Log.i("result 0","진행중");
                 gps = new GpsInfo(TMapActivity.this);
                 // GPS 사용유무 가져오기
@@ -691,13 +616,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     double t_lon=Math.abs((longitude-end.getLongitude())*100000d)/100000d;
                     Log.i("Distence from end_p",""+(t_lat+t_lon));
                     if((t_lat+t_lon)<0.00030) {
-                        /*
-                        Intent intent3 = new Intent(
-                                getApplicationContext(),//현재제어권자
-                                MainService.class); // 이동할 컴포넌트
-                        stopService(intent3);
-                        */
-                        //목적지 도착
+                        ghandler.removeMessages(0);
                         mhandler.removeMessages(0);
                         handler.removeMessages(0);
                         Intent endIntent = new Intent(TMapActivity.this, endActivity.class);
@@ -705,7 +624,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                         endIntent.putExtra("primaryKey", primaryKey);
                         TMapActivity.this.startActivity(endIntent);
                     }
-                    //Toast.makeText(getApplicationContext(),"당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,Toast.LENGTH_LONG).show();
                 }else {
                     // GPS 를 사용할수 없으므로
                     gps.showSettingsAlert();
@@ -716,13 +634,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 Log.i("result 1","진행 완료 ");
             }
             else if(result_p.equals("2")){
+                mhandler.removeMessages(0);
                 Log.i("result 2","CCTV 얼굴 미확인, 팝업 실행");
                 Intent tmapIntent = new Intent(TMapActivity.this, Pop.class);
                 tmapIntent.putExtra("password", password);
                 tmapIntent.putExtra("phonenumber", phonenumber);
-                //tmapIntent.putExtra("handler", (Parcelable) mhandler);
                 TMapActivity.this.startActivityForResult(tmapIntent,1111);
-                mhandler.removeMessages(0);
                 //웹서버 상태 0으로 변경
             }
             Log.i("반환된 result값",""+result_p);
