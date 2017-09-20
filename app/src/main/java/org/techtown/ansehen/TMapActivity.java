@@ -544,7 +544,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 changeState("exit");
                 Log.i("test",primaryKey);
                 dataClear(primaryKey);
-                changeState("result");
             }
         };
         t_thread.start();
