@@ -671,7 +671,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             result_p= result.substring(indexOf+10,indexOf+11);
 
             //result 반환값 설정 0(진행중) 1(진행완료) 2(CCTV 얼굴 미확인,팝업발생)
-            if(result_p.equals("0")) {
+            if(result_p.equals("0")||result_p.equals("1")) {
                 Log.i("result 0","진행중");
                 gps = new GpsInfo(TMapActivity.this);
                 // GPS 사용유무 가져오기
@@ -698,9 +698,6 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 }
 
             }
-            else if(result_p.equals("1")){
-                Log.i("result 1","진행 완료 ");
-            }
             else if(result_p.equals("2")){
                 mhandler.removeMessages(0);
                 Log.i("result 2","CCTV 얼굴 미확인, 팝업 실행");
@@ -710,7 +707,14 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                 TMapActivity.this.startActivityForResult(tmapIntent,1111);
                 //웹서버 상태 0으로 변경
             }
-            Log.i("반환된 result값",""+result_p);
+            else{
+                mhandler.removeMessages(0);
+                Log.i("result "+result_p,"CCTV 값 전송 에러, 팝업 실행");
+                Intent tmapIntent = new Intent(TMapActivity.this, Pop.class);
+                tmapIntent.putExtra("password", password);
+                tmapIntent.putExtra("phonenumber", phonenumber);
+                TMapActivity.this.startActivityForResult(tmapIntent,1111);
+            }
         }
 
 
