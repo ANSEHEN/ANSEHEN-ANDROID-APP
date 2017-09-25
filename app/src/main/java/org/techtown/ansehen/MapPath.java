@@ -34,6 +34,7 @@ public class MapPath {
     }   
     public void setAllPath(){
         Log.i("SetAllPath","Start: -----------------------------");
+        Log.i("size test",""+size_num);
         for(int i=0;i<size_num;i++){
             if(i==size_num-1){
                 allPath=allPath.concat(""+map_Path.get(i).getLatitude()+","+map_Path.get(i).getLongitude());

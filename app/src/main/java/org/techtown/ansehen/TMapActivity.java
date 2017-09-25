@@ -232,7 +232,7 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
             }
         });
-        mapView.setSKPMapApiKey("0964bcd8-f1f6-325c-9903-0210ac72ef61");
+        mapView.setSKPMapApiKey("9d4ebb05-ddfa-3c1a-bcf8-02c57bce3503"); //0964bcd8-f1f6-325c-9903-0210ac72ef61
         mapView.setLanguage(TMapView.LANGUAGE_KOREAN);
 
         Button btn = (Button) findViewById(R.id.btn_search);
