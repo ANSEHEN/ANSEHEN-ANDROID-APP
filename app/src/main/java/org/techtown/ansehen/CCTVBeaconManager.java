@@ -12,13 +12,13 @@ import java.net.URL;
 import java.sql.Time;
 
 class TimeManagement{
-    private long start;
+    private long start=0;
     private long end;
     void TimeStart(){
         start=System.currentTimeMillis();
     }
     int TimeEnd(){
-        if(start!=0){
+        if(start != 0){
             int time;
             end=System.currentTimeMillis();
             time=((int)(end-start)/1000);
@@ -37,26 +37,30 @@ public class CCTVBeaconManager{
         num=0;
     }
     public void beaconTimeCheck(){
-        while(true) {
-            int i;
-            for (i = 0; i < num; i++) {
-                if (tm[i].TimeEnd() > 15) {
-                    Log.i("beacon Disconnect", "-------------------");
-                    this.beaconDisconnect(Array_CctvId[i]);
-                    //tm[i] 공간 소멸하고 배열 정리하기
-                    tm[i] = null;
-                    Array_CctvId[i] = null;
-                    if (i != (num - 1)) {
-                        for (int j = i; j < (num - 1); j++) {
-                            tm[j] = tm[j + 1];
-                            Array_CctvId[j] = Array_CctvId[j + 1];
+        try {
+            while (true) {
+                int i;
+                for (i = 0; i < num; i++) {
+                    if (tm[i].TimeEnd() > 15) {
+                        Log.i("beacon Disconnect", "-------------------");
+                        this.beaconDisconnect(Array_CctvId[i]);
+                        //tm[i] 공간 소멸하고 배열 정리하기
+                        tm[i] = null;
+                        Array_CctvId[i] = null;
+                        if (i != (num - 1)) {
+                            for (int j = i; j < (num - 1); j++) {
+                                tm[j] = tm[j + 1];
+                                Array_CctvId[j] = Array_CctvId[j + 1];
+                            }
                         }
+                        tm[num - 1] = null;
+                        Array_CctvId[num - 1] = null;
+                        num--;
                     }
-                    tm[num - 1] = null;
-                    Array_CctvId[num - 1] = null;
-                    num--;
                 }
             }
+        }catch(Exception e){
+            Log.i("error","---");
         }
     }
     public void beaconDisconnect(String beaconTemp){

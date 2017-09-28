@@ -20,6 +20,7 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -443,8 +444,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         mapView.setCenterPoint(lng, lat);
     }
 
-    private void setMyLocation(double lat, double lng) {
-        Bitmap icon = ((BitmapDrawable) ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_map)).getBitmap();
+    private void setMyLocation(double lat, double lng) {//ic_dialog_map
+        Bitmap icon = ((BitmapDrawable) ContextCompat.getDrawable(this, android.R.drawable.ic_menu_mylocation)).getBitmap();
         mapView.setIcon(icon);
         mapView.setLocationPoint(lng, lat);
         mapView.setIconVisibility(true);
@@ -588,9 +589,10 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
     Handler ghandler = new Handler(){
         public void handleMessage(Message msg){
             /* 현재 보는 방향 */
-            //mapView.setCompassMode(true);
+            mapView.setCompassMode(true);
             /* 현위치 아이콘표시 */
-            mapView.setIconVisibility(true);
+            //mapView.setIconVisibility(true);
+            setMyLocation(cacheLocation.getLatitude(), cacheLocation.getLongitude());
             /* 줌레벨 */
             //mapView.setZoomLevel(15);
             mapView.setMapType(TMapView.MAPTYPE_STANDARD);
@@ -601,9 +603,9 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
             tmapgps.setMinDistance(5);
             tmapgps.setProvider(tmapgps.NETWORK_PROVIDER);//연결된 인터넷으로 현 위치를 받습니다.
             tmapgps.OpenGps();
-            //mapView.setTrackingMode(true);
+            mapView.setTrackingMode(true);
             mapView.setSightVisible(true);
-            ghandler.sendEmptyMessageDelayed(0, 5000);
+            ghandler.sendEmptyMessageDelayed(0, 6000);
         }
     };
     Handler mhandler = new Handler() {
@@ -655,15 +657,14 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(TMapActivity.this,
-                    "Please Wait", null, true, true);
+            //progressDialog = ProgressDialog.show(TMapActivity.this,"Please Wait", null, true, true);
         }
 
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             Log.d(TAG, "response  - " + result);
             //String temp=result.substring(indexOf,1);
             Log.i("P2",""+result);
@@ -672,6 +673,15 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
 
             //result 반환값 설정 0(진행중) 1(진행완료) 2(CCTV 얼굴 미확인,팝업발생)
             if(result_p.equals("0")||result_p.equals("1")) {
+                /*
+                Log.i("result 0","진행중");
+                TMapPoint test_aa= tmapgps.getLocation();
+                Log.i("test_aa",""+test_aa);
+                Log.i("e_lat,e_lon",end.getLatitude()+","+end.getLongitude());
+                double t_lat=Math.abs((test_aa.getLatitude()-end.getLatitude())*100000d)/100000d;
+                double t_lon=Math.abs((test_aa.getLongitude()-end.getLongitude())*100000d)/100000d;
+                Log.i("Distence from end_p",""+((t_lat+t_lon*100000d)/100000d));
+                */
                 Log.i("result 0","진행중");
                 gps = new GpsInfo(TMapActivity.this);
                 // GPS 사용유무 가져오기
@@ -682,8 +692,8 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     Log.i("e_lat,e_lon",end.getLatitude()+","+end.getLongitude());
                     double t_lat=Math.abs((latitude-end.getLatitude())*100000d)/100000d;
                     double t_lon=Math.abs((longitude-end.getLongitude())*100000d)/100000d;
-                    Log.i("Distence from end_p",""+(t_lat+t_lon));
-                    if((t_lat+t_lon)<0.00030) {
+                    Log.i("Distence from end_p",""+((t_lat+t_lon*100000d)/100000d));
+                    if((t_lat+t_lon)<0.0004) {
                         ghandler.removeMessages(0);
                         mhandler.removeMessages(0);
                         handler.removeMessages(0);
@@ -696,11 +706,12 @@ public class TMapActivity extends AppCompatActivity implements BeaconConsumer {
                     // GPS 를 사용할수 없으므로
                     gps.showSettingsAlert();
                 }
-
             }
             else if(result_p.equals("2")){
+                final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 mhandler.removeMessages(0);
                 Log.i("result 2","CCTV 얼굴 미확인, 팝업 실행");
+                vibrator.vibrate(500);
                 Intent tmapIntent = new Intent(TMapActivity.this, Pop.class);
                 tmapIntent.putExtra("password", password);
                 tmapIntent.putExtra("phonenumber", phonenumber);
